@@ -2,6 +2,7 @@
 #include <assert.h>  /* assert() */
 #include <stdlib.h>  /* NULL, strtod() */
 #include <string.h>
+#include <math.h>
 #ifndef TRUE
 #define TRUE 1
 #endif // !TRUE
@@ -85,8 +86,11 @@ static int lept_parse_number(lept_context* c, lept_value* v) {
 	}
 
 	v->n = strtod(c->json, &end);
-	if (c->json == end)
-		return LEPT_PARSE_INVALID_VALUE;								  
+	/*if (c->json == end)
+		return LEPT_PARSE_INVALID_VALUE;*/	
+	if (!isfinite(v->n)) {
+		return LEPT_PARSE_NUMBER_TOO_BIG;
+	}
 	c->json = end;
 	v->type = LEPT_NUMBER;
 	return LEPT_PARSE_OK;
