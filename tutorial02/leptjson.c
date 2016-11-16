@@ -69,7 +69,7 @@ static int lept_parse_literal(lept_context* c, lept_value* v, \
 
 static int lept_parse_number(lept_context* c, lept_value* v) {
 	char* end;
-	
+	/*  so stupidly write this code for passing unit test
 	if (c->json[0] == '+' || c->json[0] == '.' \
 		||(c->json[0]!='-'&&!ISDIGIT(c->json[0]))) {
 		return LEPT_PARSE_INVALID_VALUE;
@@ -83,6 +83,30 @@ static int lept_parse_number(lept_context* c, lept_value* v) {
 	for (index = 0; ISDIGIT(c->json[index]); ++index) {};
 	if (c->json[index] == '.' && c->json[index + 1] == '\0') {
 		return LEPT_PARSE_INVALID_VALUE;
+	}*/
+
+	const char* p = c->json;
+	// '-'
+	if (*p == '-')
+		p++;
+	// integer
+	if (*p == '0') p++;
+	else{
+		if (!ISDIGIT1TO9(*p)) return LEPT_PARSE_INVALID_VALUE;
+		for (p++; ISDIGIT(*p); p++);
+	}
+	//float
+	if (*p == '.') {
+		p++;
+		if (!ISDIGIT(*p)) return LEPT_PARSE_INVALID_VALUE;
+		for (p++; ISDIGIT(*p); p++);
+	}
+	// e
+	if (*p == 'e' || *p == 'E') {
+		p++;
+		if (*p == '-' || *p == '+') p++;
+		if (!ISDIGIT(*p)) return LEPT_PARSE_INVALID_VALUE;
+		for (p++; ISDIGIT(*p); p++);
 	}
 
 	v->n = strtod(c->json, &end);
